@@ -110,6 +110,24 @@ export class LambdaInvoke extends sfn.TaskStateBase {
       );
     }
 
+    if (props.stateName && !cdk.Token.isUnresolved(props.stateName)) {
+      if (props.stateName.length > 80) {
+        throw new Error(`State name can not be longer than 80 characters but has ${props.stateName.length} characters.`);
+      }
+      if (!/^[a-zA-Z0-9-_\s]+$/.test(props.stateName)) {
+        throw new Error(`State name ${props.stateName} can only contain letters, numbers, hyphens, underscores or whitespace.`);
+      }
+    }
+
+    if (!props.stateName) {
+      if (id.length > 80) {
+        throw new Error(`Id can not be longer than 80 characters but has ${id.length} characters.`)
+      }
+      if (!/^[a-zA-Z0-9-_\s]+$/.test(id)) {
+        throw new Error(`Id ${id} can only contain letters, numbers, hyphens, underscores or whitespace.`);
+      }
+    }
+
     this.taskMetrics = {
       metricPrefixSingular: 'LambdaFunction',
       metricPrefixPlural: 'LambdaFunctions',

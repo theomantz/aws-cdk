@@ -393,4 +393,43 @@ describe('LambdaInvoke', () => {
       });
     }).toThrow(/Unsupported service integration pattern. Supported Patterns: REQUEST_RESPONSE,WAIT_FOR_TASK_TOKEN. Received: RUN_JOB/);
   });
+
+  test('error when state name length is longer than 80 characters', () => {
+    expect(() => new LambdaInvoke(stack, 'Task', {
+      stateName: 'a'.repeat(81),
+      lambdaFunction: lambdaFunction,
+    })).toThrow(/State name can not be longer than 80 characters but has 81 characters./);
+  })
+
+  test('error when state name contains forbidden characters', () => {
+    expect(() => new LambdaInvoke(stack, 'Task', {
+      stateName: 'forbidden-ch@r@cters',
+      lambdaFunction: lambdaFunction,
+    })).toThrow(/State name forbidden-ch@r@cters can only contain letters, numbers, hyphens, underscores or whitespace./);
+  })
+
+  test('does not error when name is shorter than 80 characters', () => {
+    expect(() => new LambdaInvoke(stack, 'Task', {
+      stateName: 'passing-state-name',
+      lambdaFunction: lambdaFunction,
+    })).not.toThrow();
+  })
+
+  test('error when id length is longer than 80 characters', () => {
+    expect(() => new LambdaInvoke(stack, 'a'.repeat(81), {
+      lambdaFunction: lambdaFunction,
+    })).toThrow(/Id can not be longer than 80 characters but has 81 characters./);
+  })
+
+  test('error when state name contains forbidden characters', () => {
+    expect(() => new LambdaInvoke(stack, 'forbidden-ch@r@cters', {
+      lambdaFunction: lambdaFunction,
+    })).toThrow(/Id forbidden-ch@r@cters can only contain letters, numbers, hyphens, underscores or whitespace./);
+  })
+
+  test('does not error when id is shorter than 80 characters', () => {
+    expect(() => new LambdaInvoke(stack, 'Task', {
+      lambdaFunction: lambdaFunction,
+    })).not.toThrow();
+  })
 });
